@@ -1,0 +1,32 @@
+version: "3"
+services: 
+  app:
+    build: ./app
+    container_name: clean_architecture_todo
+    tty: true
+    volumes:
+      - ./app:/go/src/app
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    # command: sh -c "go run main.go"
+
+  mysql:
+    platform: linux/x86_64
+    image: mysql:8.0.27
+    container_name: clean_architecture_todo_db
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/mysql_data:/var/lib/mysql
+
+volumes:
+  mysql:
+networks:
+  golang_test_network:
+    external: true
