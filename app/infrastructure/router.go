@@ -18,7 +18,7 @@ func SetUpRouting() *http.ServeMux {
 
     sqlhandler := NewSqlhandler()
     userController := controllers.NewUserController(sqlhandler)
-    // todoController := controllers.NewTodoController(sqlhandler)
+    todoController := controllers.NewTodoController(sqlhandler)
 
     mux.HandleFunc("/user/create", func(w http.ResponseWriter, r *http.Request) {
         switch r.Method {
@@ -50,6 +50,47 @@ func SetUpRouting() *http.ServeMux {
 		switch r.Method {
 		case http.MethodPost:
 			userController.Delete(w, r)
+		default:
+			ResponseError(w, http.StatusNotFound, "")
+		}
+	})
+
+	mux.HandleFunc("/todo/create", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			todoController.Create(w, r)
+		default:
+			ResponseError(w, http.StatusNotFound, "")
+		}
+	})
+	mux.HandleFunc("/todo/get", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			todoController.Show(w, r)
+		default:
+			ResponseError(w, http.StatusNotFound, "")
+		}
+	})
+	mux.HandleFunc("/todo/update", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			todoController.Update(w, r)
+		default:
+			ResponseError(w, http.StatusNotFound, "")
+		}
+	})
+	mux.HandleFunc("/todo/delete", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			todoController.Delete(w, r)
+		default:
+			ResponseError(w, http.StatusNotFound, "")
+		}
+	})
+	mux.HandleFunc("/todo/search", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			todoController.Search(w, r)
 		default:
 			ResponseError(w, http.StatusNotFound, "")
 		}
