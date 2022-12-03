@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"log"
 
 	"github.com/moriwakihikari/clean_architecture_with_todo.git/interfaces/database"
 )
@@ -23,13 +24,14 @@ func NewSqlhandler() *Sqlhandler {
 	db, err := sql.Open("mysql", path); 
 	if err != nil {
 		return nil
-		// log.Fatal("Db open error:", err.Error())
+		log.Fatal("Db open error:", err.Error())
 	}
 	err = db.Ping()
     if err != nil {
         fmt.Println("here")
         return nil
     }
+	fmt.Println(db)
 
 	return &Sqlhandler{db}
 }

@@ -53,7 +53,7 @@ func (repo *UserRepository) Delete(userID int) (err error) {
 }
 
 func (repo *UserRepository) FindById(userID int) (user model.User, err error) {
-	row, err := repo.Sqlhandler.Query("SELECT id, FirstName, LastName FROM users WHERE id = $1;", userID)
+	row, err := repo.Sqlhandler.Query("SELECT id, FirstName, LastName FROM users WHERE id = ?", userID)
 	if err != nil {
 		return
 	}
