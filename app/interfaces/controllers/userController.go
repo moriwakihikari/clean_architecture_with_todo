@@ -4,8 +4,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/moriwakihikari/clean_architecture_with_todo.git/domain/model"
 	"github.com/moriwakihikari/clean_architecture_with_todo.git/interfaces/database"
@@ -20,6 +24,7 @@ type UserController struct {
 // Usecaseレイヤとinfrastructure/databaseを紐づけられます。
 // 次にルーティングを実装します。
 func NewUserController(sqlHandler database.Sqlhandler) *UserController {
+	fmt.Println(sqlHandler)
 	return &UserController{
 		Interactor: usecase.UserInteractor{
 			UserRepository: &database.UserRepository{
@@ -60,26 +65,18 @@ func (controller *UserController) Index(w http.ResponseWriter, r *http.Request) 
 }
 
 func (controller *UserController) Show(w http.ResponseWriter, r *http.Request) {
-	b, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		ResponseError(w, http.StatusInternalServerError, err.Error())
-		return
+	sub := strings.TrimPrefix(r.URL.Path, "/user/get/")
+    _, string_id := filepath.Split(sub)
+    if string_id != "" {
+		var id int
+		id, _ = strconv.Atoi(string_id)
+		user, err := controller.Interactor.UserById(id)
+		if err != nil {
+			ResponseError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		ResponseOk(w, user)
 	}
-
-	var req struct {
-		ID int `json:"id"`
-	}
-	if err := json.Unmarshal(b, &req); err != nil {
-		ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	user, err := controller.Interactor.UserById(req.ID)
-	if err != nil {
-		ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	ResponseOk(w, user)
 }
 
 func (controller *UserController) Update(w http.ResponseWriter, r *http.Request) {

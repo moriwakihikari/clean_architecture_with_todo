@@ -15,7 +15,6 @@ import (
 // 各レイヤの依存関係を保つことができます。
 func SetUpRouting() *http.ServeMux {
     mux := http.NewServeMux()
-
     sqlhandler := NewSqlhandler()
     userController := controllers.NewUserController(sqlhandler)
     todoController := controllers.NewTodoController(sqlhandler)
@@ -29,14 +28,24 @@ func SetUpRouting() *http.ServeMux {
         }
     })
 
-    mux.HandleFunc("/user/get", func(w http.ResponseWriter, r *http.Request) {
+    mux.HandleFunc("/users/get", func(w http.ResponseWriter, r *http.Request) {
         switch r.Method {
-        case http.MethodPost:
+        case http.MethodGet:
+            userController.Index(w, r)
+        default:
+            ResponseError(w, http.StatusNotFound, "")
+        }
+    })
+
+	mux.HandleFunc("/user/get/", func(w http.ResponseWriter, r *http.Request) {
+        switch r.Method {
+        case http.MethodGet:
             userController.Show(w, r)
         default:
             ResponseError(w, http.StatusNotFound, "")
         }
     })
+
 	mux.HandleFunc("/user/update", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:

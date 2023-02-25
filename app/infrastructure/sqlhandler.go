@@ -6,8 +6,10 @@ package infrastructure
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"log"
+	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/moriwakihikari/clean_architecture_with_todo.git/interfaces/database"
 )
@@ -20,18 +22,17 @@ func NewSqlhandler() *Sqlhandler {
 	user := os.Getenv("MYSQL_USER")
 	pw := os.Getenv("MYSQL_PASSWORD")
 	db_name := os.Getenv("MYSQL_DATABASE")
-	path := fmt.Sprintf("%s:%s@tcp(db:3306)/%s?charset=utf8&parseTime=true", user, pw, db_name)
+	path := fmt.Sprintf("%s:%s@tcp(mysql:3306)/%s?charset=utf8&parseTime=true", user, pw, db_name)
 	db, err := sql.Open("mysql", path); 
+
 	if err != nil {
-		return nil
 		log.Fatal("Db open error:", err.Error())
 	}
 	err = db.Ping()
     if err != nil {
-        fmt.Println("here")
+        log.Fatal("Db open error:", err.Error())
         return nil
     }
-	fmt.Println(db)
 
 	return &Sqlhandler{db}
 }
