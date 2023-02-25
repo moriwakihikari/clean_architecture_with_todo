@@ -3,7 +3,11 @@ package usecase
 // このレイヤではinterfaceレイヤからのInput portの役割、
 //interfaces/controllersへのGatewayの役割をしている。
 
-import "github.com/moriwakihikari/clean_architecture_with_todo.git/domain/model"
+import (
+	"fmt"
+
+	"github.com/moriwakihikari/clean_architecture_with_todo.git/domain/model"
+)
 
 type UserInteractor struct {
     UserRepository UserRepository
@@ -26,6 +30,7 @@ func (interactor *UserInteractor) Delete(userID int) (err error) {
 
 func (interactor *UserInteractor) Users() (user model.Users, err error) {
 	user, err = interactor.UserRepository.FindAll()
+	fmt.Println(user)
 	return
 }
 
